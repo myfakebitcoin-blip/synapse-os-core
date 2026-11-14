@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Session, User } from '@supabase/supabase-js';
+import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
 interface AuthState {
@@ -21,13 +21,19 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   initialize: () => {
     if (!supabase) return () => undefined;
+
     void supabase.auth.getSession().then(({ data, error }) => {
       if (error) set({ error: error.message });
       set({ session: data.session, user: data.session?.user ?? null });
+    }).catch((error: unknown) => {
+      set({ error: error instanceof Error ? error.message : 'Falha ao carregar a sessão.' });
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      set({ session, user: session?.user ?? null, error: null });
-    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event: AuthChangeEvent, session: Session | null) => {
+        set({ session, user: session?.user ?? null, error: null });
+      }
+    );
     return () => subscription.unsubscribe();
   },
 
