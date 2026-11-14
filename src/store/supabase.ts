@@ -1,3 +1,6 @@
-// Keep the auth store's local import stable while centralizing optional configuration
-// and safe no-Supabase behavior in the shared client module.
-export { supabase } from '../lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

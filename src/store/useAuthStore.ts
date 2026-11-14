@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
-import { supabase } from './supabase';
+import { isSupabaseConfigured, supabase } from './supabase';
 
 interface AuthState {
   session: Session | null;
@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   error: null,
 
   initialize: () => {
-    if (!supabase) return () => undefined;
+    if (!isSupabaseConfigured) return () => undefined;
 
     void supabase.auth.getSession().then(({ data, error }) => {
       if (error) set({ error: error.message });
@@ -38,7 +38,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signIn: async (email, password) => {
-    if (!supabase) throw new Error('Supabase não está configurado.');
+    if (!isSupabaseConfigured) throw new Error('Supabase não está configurado.');
     set({ loading: true, error: null });
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -53,7 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUp: async (email, password) => {
-    if (!supabase) throw new Error('Supabase não está configurado.');
+    if (!isSupabaseConfigured) throw new Error('Supabase não está configurado.');
     set({ loading: true, error: null });
     try {
       const { error } = await supabase.auth.signUp({ email, password });
@@ -68,7 +68,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signOut: async () => {
-    if (!supabase) return;
+    if (!isSupabaseConfigured) return;
     const { error } = await supabase.auth.signOut();
     if (error) set({ error: error.message });
   }
