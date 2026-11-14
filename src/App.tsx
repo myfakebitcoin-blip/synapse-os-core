@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import {
   Background,
   BackgroundVariant,
@@ -7,7 +7,10 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Share2, Sparkles } from 'lucide-react';
+import { AccountPanel } from './components/AccountPanel';
 import { SynapticNode } from './components/SynapticNode';
+import { useSupabaseRoom } from './lib/useSupabaseRoom';
+import { useAuthStore } from './store/useAuthStore';
 import { useSynapseStore } from './store/useSynapseStore';
 
 const nodeTypes = { synaptic: SynapticNode };
@@ -15,7 +18,10 @@ const WORKER_URL = (import.meta.env.VITE_WORKER_URL ?? '').trim();
 
 export default function App() {
   const [prompt, setPrompt] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   const { nodes, edges, roomName, isOrchestrating, executionLog, onNodesChange, onEdgesChange, connectRoom, orchestrateGoal } = useSynapseStore();
+  const user = useAuthStore((state) => state.user);
+  const presence = useSupabaseRoom(roomName, user);
 
   useEffect(() => {
     const syncRoomFromHash = () => connectRoom(window.location.hash);
@@ -39,8 +45,7 @@ export default function App() {
     }
   }, [connectRoom, roomName]);
 
-  const [shareMessage, setShareMessage] = useState('');
-  const submitGoal = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitGoal = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const goal = prompt.trim();
     if (goal && !isOrchestrating) void orchestrateGoal(goal, WORKER_URL);
@@ -55,6 +60,8 @@ export default function App() {
           <span className="execution-log" title={executionLog}>{executionLog}</span>
         </div>
         <div className="share-group">
+          {presence.connected && <span className="presence-indicator" title="Presença Supabase conectada">{presence.participantCount} online</span>}
+          <AccountPanel />
           <button type="button" className="share-button" onClick={() => void handleShareRoom()}>
             <Share2 aria-hidden="true" />
             Compartilhar sala
