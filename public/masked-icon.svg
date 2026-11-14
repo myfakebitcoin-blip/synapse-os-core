@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Synapse mask icon">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="100" fill="#09090b"/>
+  <circle cx="256" cy="256" r="150" fill="url(#g)"/>
+  <path d="M256 133c-67 0-123 56-123 123 0 50 31 94 76 112l-18 43 77-31c43-18 73-61 73-111 0-68-55-123-123-123Zm0 38c47 0 85 38 85 85 0 47-38 85-85 85s-85-38-85-85c0-47 38-85 85-85Zm-24 27h48v90h-48v-90Zm0 102h48v48h-48v-48Z" fill="#f8fafc"/>
+</svg>
