@@ -1,113 +1,75 @@
 :root {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #f4f4f5;
   background: #09090b;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; margin: 0; }
+body { min-width: 320px; min-height: 100vh; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
 
-html, body, #root {
-  margin: 0;
-  min-height: 100%;
-  min-width: 100%;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #111827 0%, #09090b 48%);
-}
+.synapse-app { width: 100%; height: 100%; min-height: 480px; display: flex; flex-direction: column; background: #09090b; }
+.topbar { position: relative; z-index: 5; height: 64px; flex: 0 0 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 24px; border-bottom: 1px solid rgba(63, 63, 70, .7); background: rgba(9, 9, 11, .94); }
+.brand-group, .share-group { min-width: 0; display: flex; align-items: center; gap: 12px; }
+.brand-indicator { width: 10px; height: 10px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 14px #38bdf8; }
+.brand-name { flex: 0 0 auto; font-size: 13px; font-weight: 800; letter-spacing: .14em; }
+.execution-log { overflow: hidden; max-width: min(52vw, 680px); color: #a1a1aa; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.share-group { justify-content: flex-end; }
+.share-button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #3f3f46; border-radius: 10px; color: #e4e4e7; background: #18181b; font-size: 12px; transition: background .2s, border-color .2s; }
+.share-button:hover { border-color: #38bdf8; background: #27272a; }
+.share-button svg { width: 15px; height: 15px; color: #38bdf8; }
+.share-message { position: absolute; top: 54px; right: 24px; max-width: min(90vw, 440px); padding: 8px 12px; border: 1px solid #3f3f46; border-radius: 8px; color: #d4d4d8; background: #18181b; font-size: 12px; }
+.canvas-area { position: relative; flex: 1; min-height: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 40%, rgba(14, 36, 54, .24), transparent 62%), #09090b; }
+.canvas-area .react-flow { background: transparent; }
+.canvas-empty { position: absolute; top: 40%; left: 50%; z-index: 1; width: min(540px, 85vw); transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+.empty-orb { width: 56px; height: 56px; display: inline-grid; place-items: center; margin-bottom: 18px; border: 1px solid rgba(56, 189, 248, .35); border-radius: 18px; color: #7dd3fc; background: rgba(14, 116, 144, .12); box-shadow: 0 0 42px rgba(56, 189, 248, .12); }
+.empty-orb svg { width: 24px; height: 24px; }
+.canvas-empty h1 { margin: 0 0 10px; font-size: clamp(20px, 3vw, 30px); letter-spacing: -.03em; }
+.canvas-empty p { margin: 0 auto; max-width: 48ch; color: #a1a1aa; font-size: 14px; line-height: 1.65; }
+.command-bar { position: absolute; bottom: 28px; left: 50%; z-index: 4; width: min(760px, calc(100% - 32px)); display: flex; gap: 8px; padding: 8px; transform: translateX(-50%); border: 1px solid rgba(82, 82, 91, .85); border-radius: 16px; background: rgba(24, 24, 27, .94); box-shadow: 0 20px 70px rgba(0, 0, 0, .45); backdrop-filter: blur(16px); }
+.command-bar input { min-width: 0; flex: 1; padding: 0 12px; border: 0; outline: 0; color: #f4f4f5; background: transparent; font-size: 14px; }
+.command-bar input::placeholder { color: #71717a; }
+.command-bar button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; border: 0; border-radius: 11px; color: #082f49; background: #38bdf8; font-size: 13px; font-weight: 700; transition: background .2s; }
+.command-bar button:hover:not(:disabled) { background: #7dd3fc; }
+.command-bar button:disabled { opacity: .48; }
+.command-bar button svg { width: 16px; height: 16px; }
+.synaptic-node { width: 270px; padding: 15px; border: 1px solid rgba(56, 189, 248, .68); border-radius: 14px; color: #f4f4f5; background: rgba(24, 24, 27, .96); box-shadow: 0 15px 40px rgba(2, 132, 199, .16); transition: border-color .3s, box-shadow .3s, background .3s; }
+.synaptic-node.is-running { animation: synapse-pulse 1.4s ease-in-out infinite; }
+.synaptic-node.is-done { border-color: #34d399; background: rgba(2, 44, 34, .94); box-shadow: 0 0 28px rgba(16, 185, 129, .18); }
+.synaptic-node.is-error { border-color: #fb7185; background: rgba(76, 5, 25, .92); }
+.synaptic-node-heading { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #7dd3fc; }
+.synaptic-node-heading > svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.synaptic-node.is-running .synaptic-node-heading > svg { animation: synapse-spin 3s linear infinite; }
+.synaptic-node.is-done .synaptic-node-heading { color: #6ee7b7; }
+.synaptic-node.is-error .synaptic-node-heading { color: #fda4af; }
+.synaptic-node-heading > span:first-of-type { overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; letter-spacing: .08em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.synaptic-status { margin-left: auto; color: #a1a1aa; font-size: 9px; white-space: nowrap; }
+.synaptic-node-task { color: #f4f4f5; font-size: 13px; font-weight: 600; line-height: 1.45; }
+.synaptic-output { margin-top: 12px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,.1); color: #d4d4d8; font-size: 11px; }
+.synaptic-output summary { color: #a1a1aa; cursor: pointer; }
+.synaptic-output p { max-height: 180px; overflow: auto; margin: 8px 0 0; white-space: pre-wrap; }
+.synaptic-handle { width: 10px !important; height: 10px !important; border: 2px solid #09090b !important; background: #38bdf8 !important; }
+.synaptic-node.is-done .synaptic-handle { background: #34d399 !important; }
+@keyframes synapse-pulse { 50% { box-shadow: 0 0 34px rgba(14, 165, 233, .38); } }
+@keyframes synapse-spin { to { transform: rotate(360deg); } }
 
-body {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-}
-
-button {
-  appearance: none;
-  border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.4rem;
-  background: linear-gradient(135deg, #7c3aed, #22d3ee);
-  color: #fff;
-  font-size: 0.96rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.35);
-}
-
-button:hover {
-  filter: brightness(1.05);
-}
-
-.shell {
-  position: relative;
-  width: min(100%, 1100px);
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  padding: 2rem;
-}
-
-.panel {
-  position: relative;
-  z-index: 1;
-  width: min(100%, 700px);
-  padding: clamp(2rem, 5vw, 4rem);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 32px;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.55);
-}
-
-.eyebrow {
-  display: inline-block;
-  margin-bottom: 1rem;
-  letter-spacing: 0.24em;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #67e8f9;
-}
-
-h1 {
-  margin: 0 0 1rem;
-  font-size: clamp(2.5rem, 5vw, 4.4rem);
-  line-height: 0.98;
-}
-
-p {
-  margin: 0 0 2rem;
-  max-width: 56ch;
-  color: rgba(244, 244, 245, 0.8);
-  font-size: 1.05rem;
-}
-
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(30px);
-  opacity: 0.7;
-}
-
-.orb-one {
-  width: 380px;
-  height: 380px;
-  right: 8%;
-  top: 12%;
-  background: rgba(34, 211, 238, 0.18);
-}
-
-.orb-two {
-  width: 420px;
-  height: 420px;
-  left: 5%;
-  bottom: 6%;
-  background: rgba(124, 58, 237, 0.2);
+@media (max-width: 640px) {
+  .topbar { height: 58px; flex-basis: 58px; padding: 0 12px; gap: 8px; }
+  .brand-group { gap: 8px; }
+  .brand-name { font-size: 11px; }
+  .execution-log { max-width: 31vw; font-size: 9px; }
+  .share-button { gap: 6px; padding: 8px; font-size: 0; }
+  .share-button svg { width: 17px; height: 17px; }
+  .share-message { right: 12px; }
+  .command-bar { bottom: 14px; width: calc(100% - 20px); }
+  .command-bar input { padding: 0 7px; font-size: 12px; }
+  .command-bar button { padding: 10px 11px; font-size: 12px; }
 }
