@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const WORKER_URL = (
-  import.meta.env.VITE_WORKER_URL || 'https://synapse-brain-worker.myfakebitcoin.workers.dev'
+  import.meta.env.VITE_WORKER_URL || 'https://synapse-os-core.synapse-os.workers.dev'
 ).trim().replace(/\/+$/, '');
 
 interface PlanNode {

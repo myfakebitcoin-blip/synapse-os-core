@@ -1,6 +1,7 @@
 export interface Env {
   GROQ_API_KEY: string;
   ALLOWED_ORIGIN?: string;
+  ASSETS: Fetcher;
 }
 
 interface AgentNode {
@@ -116,14 +117,11 @@ Execute a tarefa solicitada entregando resultado prático, técnico, código ou 
       }
     }
 
-    if (pathname === '/' && request.method === 'GET') {
-      return new Response('SYNAPSE OS Edge Engine Online', {
-        status: 200,
-        headers: { ...headers, 'Content-Type': 'text/plain; charset=utf-8' }
-      });
+    if (pathname.startsWith('/api/')) {
+      return jsonResponse({ error: 'Not found' }, 404, headers);
     }
 
-    return jsonResponse({ error: 'Not found' }, 404, headers);
+    return env.ASSETS.fetch(request);
   }
 };
 
