@@ -14,7 +14,9 @@ import { useAuthStore } from './store/useAuthStore';
 import { useSynapseStore } from './store/useSynapseStore';
 
 const nodeTypes = { synaptic: SynapticNode };
-const WORKER_URL = (import.meta.env.VITE_WORKER_URL ?? '').trim();
+const WORKER_URL = (
+  import.meta.env.VITE_WORKER_URL || 'https://synapse-os-core.myfakebitcoin.workers.dev'
+).trim().replace(/\/+$/, '');
 
 export default function App() {
   const [prompt, setPrompt] = useState('');
@@ -45,10 +47,17 @@ export default function App() {
     }
   }, [connectRoom, roomName]);
 
-  const submitGoal = (event: FormEvent<HTMLFormElement>) => {
+  const handleExecute = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const goal = prompt.trim();
-    if (goal && !isOrchestrating) void orchestrateGoal(goal, WORKER_URL);
+    if (!goal || isOrchestrating) return;
+
+    if (!WORKER_URL || WORKER_URL.includes('SEU-SUBDOMINIO')) {
+      window.alert('Configure a URL real do Cloudflare Worker antes de executar.');
+      return;
+    }
+
+    await orchestrateGoal(goal, WORKER_URL);
   };
 
   return (
@@ -57,7 +66,7 @@ export default function App() {
         <div className="brand-group">
           <span className="brand-indicator" />
           <span className="brand-name">SYNAPSE OS</span>
-          <span className="execution-log" title={executionLog}>{executionLog}</span>
+          <span className="execution-log" title={executionLog} role="status" aria-live="polite">{executionLog}</span>
         </div>
         <div className="share-group">
           {presence.connected && <span className="presence-indicator" title="Presença Supabase conectada">{presence.participantCount} online</span>}
@@ -93,7 +102,7 @@ export default function App() {
           </div>
         )}
 
-        <form className="command-bar" onSubmit={submitGoal}>
+        <form className="command-bar" onSubmit={(event) => void handleExecute(event)}>
           <input
             aria-label="Objetivo para os agentes"
             type="text"
